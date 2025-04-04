@@ -1,41 +1,23 @@
+# Импортируем модуль для работы с регулярными выражениями
 import re
-def extract_emails(text): "Извлекает email-адреса"
-    pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    return re.findall(pattern, text)
 
-def extract_phones(text): "Извлекает номера телефонов +7-XXX-XXX-XX-XX."
-    pattern = r'\+7-\d{3}-\d{3}-\d{2}-\d{2}'
-    return re.findall(pattern, text)
 
-def extract_capital_words(text): "Извлекает слова, начинающ. с заглавной буквы"
-    pattern = r'\b[A-ZА-ЯЁ][a-zа-яё]*\b'
-    return re.findall(pattern, text)
+# Читаем файл text.txt
+data = open('text.txt').read()
+# Находим email адреса
+mails = re.findall(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}\b", data)
+# Находим номера телефонов
+phones = re.findall(r"\+7-\w{3}-\w{3}-\w{2}-\w{2}", data)
+# Находим слова начинающиеся с заглавной буквы
+capital = re.findall(r"\b[A-ZА-Я]\w*", data)
+# Записываем результаты в файлы
+with open('emails.txt', 'w') as f:
+	for i in mails:
+		f.writelines(str(i) + '\n')
+with open('phones.txt', 'w') as f:
+	for i in phones:
+		f.writelines(str(i) + '\n')
+with open('capital_words.txt', 'w') as f:
+	for i in capital:
+		f.writelines(str(i) + '\n')
 
-def save_to_file(filename, data): "Сохраняет данные в файл, каждое значение с новой строки."
-    with open(filename, 'w', encoding='utf-8') as f:
-        for item in data:
-            f.write(f"{item}\n")
-
-def main():
-    try:
-        with open('text.txt', 'r', encoding='utf-8') as file:
-            text = file.read()
-
-        emails = extract_emails(text)
-        phones = extract_phones(text)
-        capital_words = extract_capital_words(text)
-
-        save_to_file('emails.txt', emails)
-        save_to_file('phones.txt', phones)
-        save_to_file('capital_words.txt', capital_words)
-
-        print("Данные успешно извлечены и сохранены в файлы:")
-        print(f"- emails.txt: {len(emails)} email-адресов")
-        print(f"- phones.txt: {len(phones)} номеров телефонов")
-        print(f"- capital_words.txt: {len(capital_words)} слов с заглавной буквы")
-
-    except FileNotFoundError:
-        print("Ошибка: Файл 'text.txt' не найден.")
-
-if name == "main":
-    main()
